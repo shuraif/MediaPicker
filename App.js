@@ -208,12 +208,12 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     padding: 10,
-    color: 'black',
+    color: 'white',
     textAlign: 'center',
   },
   buttonStyle: {
     alignItems: 'center',
-    backgroundColor: '#DDDDDD',
+    backgroundColor: '#7f5af0',
     padding: 5,
     marginVertical: 10,
     width: 250,
