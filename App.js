@@ -1,9 +1,4 @@
-// Example of Image Picker in React Native
-// https://aboutreact.com/example-of-image-picker-in-react-native/
-
-// Import React
 import React, {useState} from 'react';
-// Import required components
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,15 +7,16 @@ import {
   TouchableOpacity,
   Image,
   Platform,
-  PermissionsAndroid,
+  PermissionsAndroid,StatusBar
 } from 'react-native';
 
-// Import Image Picker
-// import ImagePicker from 'react-native-image-picker';
 import {
   launchCamera,
   launchImageLibrary
 } from 'react-native-image-picker';
+
+import Feather from 'react-native-vector-icons/Feather';
+import Entypo from 'react-native-vector-icons/Entypo'
 
 const App = () => {
   const [filePath, setFilePath] = useState({});
@@ -117,16 +113,16 @@ const App = () => {
       console.log('Response = ', response);
 
       if (response.didCancel) {
-        alert('User cancelled camera picker');
+       // alert('User cancelled camera picker');
         return;
       } else if (response.errorCode == 'camera_unavailable') {
-        alert('Camera not available on device');
+       // alert('Camera not available on device');
         return;
       } else if (response.errorCode == 'permission') {
-        alert('Permission not satisfied');
+       // alert('Permission not satisfied');
         return;
       } else if (response.errorCode == 'others') {
-        alert(response.errorMessage);
+      //  alert(response.errorMessage);
         return;
       }
       console.log('base64 -> ', response.base64);
@@ -143,9 +139,13 @@ const App = () => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <StatusBar backgroundColor={'#3d0485'} />
+      <View style={styles.header}>
       <Text style={styles.titleText}>
-        Example of Image Picker in React Native
+        MediaPicker
       </Text>
+      </View>
+   
       <View style={styles.container}>
         {/* <Image
           source={{
@@ -157,35 +157,62 @@ const App = () => {
           source={{uri: filePath.uri}}
           style={styles.imageStyle}
         />
-        <Text style={styles.textStyle}>{filePath.uri}</Text>
+        <Text style={[styles.textStyle,{color:'black'}]}>{filePath.uri}</Text>
+
+        <View style={{flexDirection:'row'}}>
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.buttonStyle}
           onPress={() => captureImage('photo')}>
+              <Feather 
+                        name="camera"
+                        color="white"
+                        size={60}
+                    />
           <Text style={styles.textStyle}>
-            Launch Camera for Image
+           Take Pickture
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.buttonStyle}
           onPress={() => captureImage('video')}>
+              <Feather 
+                        name="video"
+                        color="white"
+                        size={60}
+                    />
           <Text style={styles.textStyle}>
-            Launch Camera for Video
+            Record Video
           </Text>
         </TouchableOpacity>
+        </View>
+
+       <View style={{flexDirection:'row'}}>
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.buttonStyle}
           onPress={() => chooseFile('photo')}>
+              <Feather 
+                        name="image"
+                        color="white"
+                        size={60}
+                    />
           <Text style={styles.textStyle}>Choose Image</Text>
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.5}
           style={styles.buttonStyle}
           onPress={() => chooseFile('video')}>
+              <Entypo 
+                        name="video"
+                        color="white"
+                        size={60}
+                    />
           <Text style={styles.textStyle}>Choose Video</Text>
         </TouchableOpacity>
+        </View>
+       
       </View>
     </SafeAreaView>
   );
@@ -194,6 +221,9 @@ const App = () => {
 export default App;
 
 const styles = StyleSheet.create({
+  header:{
+    backgroundColor:'#4f07a8',
+  },
   container: {
     flex: 1,
     padding: 10,
@@ -205,18 +235,22 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     paddingVertical: 20,
+    color:'white'
   },
   textStyle: {
     padding: 10,
     color: 'white',
     textAlign: 'center',
+    fontSize:16
   },
   buttonStyle: {
     alignItems: 'center',
     backgroundColor: '#7f5af0',
-    padding: 5,
+    padding: 8,
     marginVertical: 10,
-    width: 250,
+    borderRadius:8,
+    flex:1,
+    marginHorizontal:10
   },
   imageStyle: {
     width: 200,
