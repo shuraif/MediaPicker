@@ -1,0 +1,70 @@
+name: AppRelease
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install npm dependencies
+        run: |
+          npm install --legacy-peer-deps
+      - name: Build Android Release
+        run: |
+          cd android && ./gradlew assembleRelease
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: app-release.apk
+          path: android/app/build/outputs/apk/release/
+
+      - name: Set Release Tag
+        id: set_release_tag
+        run: echo "::set-output name=tag::$(date +"%Y%m%d%H%M%S")"
+
+      - name: Upload APK as Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: android/app/build/outputs/apk/release/*.apk
+          tag_name: ${{ steps.set_release_tag.outputs.tag }}
+
+      - name: Exclude Source Code Archives
+        if: success()
+        run: |
+          rm -f ./target/*.zip
+          rm -f ./target/*.tar.gz
+          
+      - name: Extract repository name
+        id: extract_repo
+        run: |
+          REPO_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV          
+
+      - name: Clone Apps repository
+        run: |
+          git clone https://github.com/shuraif/Apps.git apps
+          cd apps
+          mkdir -p ${{ env.REPO_NAME }}
+        env:
+          OTHER_REPO_PAT: ${{ secrets.GH_PAT }}
+
+      - name: Copy APK to Apps repository
+        run: |
+          cp android/app/build/outputs/apk/release/*.apk README.md apps/${{ env.REPO_NAME }}/
+
+      - name: Commit and push APK and README to Apps repository
+        run: |
+          cd apps
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Add APK for tag ${{ steps.set_release_tag.outputs.tag }}"
+          git push https://shuraif:${{ secrets.GH_PAT }}@github.com/shuraif/apps.git          
