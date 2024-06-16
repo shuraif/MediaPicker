@@ -17,6 +17,10 @@ jobs:
       - name: Install npm dependencies
         run: |
           npm install --legacy-peer-deps
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./android/gradlew
+
       - name: Build Android Release
         run: |
           cd android && ./gradlew assembleRelease
